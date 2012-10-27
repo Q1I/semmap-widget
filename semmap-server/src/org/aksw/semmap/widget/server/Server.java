@@ -80,12 +80,20 @@ public class Server extends HttpServlet {
 		else if (service.equals("test")) // Userdata
 			resp = "done";
 
+		String callback = request.getParameter("jsonpCallback");
+		echo("callback: "+callback);
+		if(callback == null)
+			resp +=" no callback!";
+		else
+			resp = "jsonpCallback ({ "+'"'+"html"+'"'+":"+'"'+getWidget()+'"'+"} );";
+		echo(request.toString());
+		echo(resp);
 		// CORS
 		// resp.addHeader("Access-Control-Allow-Origin",
 		// "http://localhost:8080");
-		response.addHeader("Access-Control-Allow-Origin", "*");
+//		response.addHeader("Access-Control-Allow-Origin", "*");
 
-		response.setContentType("application/json");
+		response.setContentType("text/javascript");
 
 		response.getWriter().write(resp);
 
@@ -197,6 +205,25 @@ public class Server extends HttpServlet {
 		echo("####Upload Servlet: Receiving formular done");
 	}
 
+	private String getWidget(){
+		File file = new File(getResourceDir()+"/resources/widget.html");
+	    int ch;
+	    StringBuffer strContent = new StringBuffer("");
+	    FileInputStream fin = null;
+	    try {
+	      fin = new FileInputStream(file);
+	      while ((ch = fin.read()) != -1)
+	        strContent.append((char) ch);
+	      fin.close();
+	    } catch (Exception e) {
+	      System.out.println(e);
+	    }
+		echo(strContent.toString());
+
+		return strContent.toString().replaceAll("\\s", " ");
+
+	}
+	
 	private String getResourceDir() {
 		String prefix = getServletContext().getRealPath("");
 		if (!prefix.endsWith("/")) {

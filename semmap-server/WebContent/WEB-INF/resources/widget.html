@@ -1,0 +1,17 @@
+<form action='http://localhost:8080/semmap-server/Server'
+	enctype='multipart/form-data' method='post'>
+	<p>
+		Type property: <br> <input type='text' name='property' size='30'>
+		<input id='user' type='text' name='userId' size='30' value='foo'
+			style='display: none'> <input id='resource' type='text'
+			name='resourceUri' size='30' value='http://bla.de/uris'
+			style='display: none'>
+	</p>
+	<p>
+		Please specify a file, or a set of files: <br> <input type='file'
+			name='file' size='40'>
+	</p>
+	<div>
+		<input type='submit' value='Send'>
+	</div>
+</form>
