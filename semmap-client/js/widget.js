@@ -1,12 +1,92 @@
+function init(){
+	initLogin();
+	initStars();
+	initUpload();
+}
+
+function initLogin(){
+	var lib = '<script type="text/javascript" src="js/lib/jquery.openid.js"></script>';
+	$.get('html/login.html', function(data) {
+	 $('head').append(lib);$('#login').html(data);
+	 
+	 $("form.openid:eq(0)").openid();
+	});
+}
+
+function initStars(){
+	var lib ='<script type="text/javascript" src="js/lib/jquery.rating.pack.js"></script>';
+	$.get('html/stars.html', function(data) {
+	 $('#starRating').html(data);
+	 $('head').append(lib);
+	});
+}
+
+function initUpload(){
+	$.get('html/upload.html', function(data) {
+	 $('#upload').html(data);
+	});
+}
+
+function initDetails(){
+	$('#details').html();
+}
+
+function setRating(){
+	var rat = $('input[type=radio].star:checked').rating().val();
+	if(rat != undefined)
+		$('#rating').val(rat);
+}
+
+function getUser(){
+	alert(userId);
+	return userId;
+}
+
+function setUser(user){
+	userId=user;
+	$('#user').val(user);
+	$('#user').css('display','');
+	alert($('#user').val());
+	
+}
+
+function getResource(){
+	alert(resourceUri);
+	return resourceUri;
+}
+
+function setProperty(){
+	var prop=$('#selectProperty').val();
+	if(prop=='other'){
+		prop='';
+		$('#property').css('display','');
+	}else
+		$('#property').css('display','none');
+	$('#property').val(prop);
+}
+function checkForm(){
+	var okay = true;
+	if($('#property').val().length<3){
+		okay= false;
+		alert('Property field empty!');
+	}
+	if($('#file').val().length==0){
+		okay=false;
+		alert('No file selected!');
+	}
+	setRating();
+	return okay;
+	
+}
 function test() {
 	window.alert("test!");
 	var url = "http://localhost:8080/semmap-server/Server?callback=bla";
 	$.ajax({
 		url : "http://localhost:8080/semmap-server/Server",
-		dataType: 'jsonp',
-        jsonp: 'jsonpCallback',
+		dataType : 'jsonp',
+		jsonp : 'jsonpCallback',
 		beforeSend : function(xhr) {
-			xhr.overrideMimeType("text/plain; charset=x-user-defined");
+			xhr.overrideMimeType("text/javascript; charset=x-user-defined");
 		}
 	}).done(function(data) {
 		window.alert("done");
@@ -14,8 +94,7 @@ function test() {
 	});
 }
 
-function jsonpCallback(data){
-	// window.alert(data.html.toString);
+function jsonpCallback(data) {
 	$('#semmap-widget').html(data.html);
 }
 
@@ -67,10 +146,22 @@ function jsonpCallback(data){
 			css_link.appendTo('head');
 
 			/******* Load HTML *******/
-			var jsonp_url = "http://al.smeuh.org/cgi-bin/webwidget_tutorial.py?callback=?";
-			$.getJSON(jsonp_url, function(data) {
-				$('#test').html("This data comes from another server: " + data.html);
-			});
+			//initWidget();
+			init();
+		});
+	}
+
+	function initWidget() {
+		$.ajax({
+			url : "http://localhost:8080/semmap-server/Server",
+			dataType : 'jsonp',
+			jsonp : 'jsonpCallback',
+			beforeSend : function(xhr) {
+				xhr.overrideMimeType("text/javascript; charset=x-user-defined");
+			}
+		}).done(function(data) {
+			window.alert("done");
+			// $('#semmap-widget').html(data.html);
 		});
 	}
 

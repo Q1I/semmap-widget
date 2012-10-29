@@ -2,20 +2,56 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<script type="text/javascript" src="js/lib/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/lib/jquery-1.8.2.min.js"></script>
 		<script type="text/javascript" src="js/widget.js"></script>
 		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/jquery.rating.css">
+		<link rel="stylesheet" href="css/openid.css">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>SEMMAP</title>
+		<script type="text/javascript">
+			userId = 'asdfg';
+			resourceUri = 'http://dbpedia.org/germany';
+		</script>
 	</head>
 	<body>
 		<h1>Semmap Widget Page</h1>
 		<!-- <script src="http://localhost:8080/semmap-server/Server/script.js" type="text/javascript"></script>-->
-		<div id="semmap-widget">bla</div>
+		<div id="semmap-widget">
+			<!-- left -->
+			<div class='left'>
+				<img id='picture' src='css/image/pic.jpg'/>
+				<div id='starRating'>
+					<!-- Insert star Rating -->
+				</div>
+			</div>
+			<!-- right -->
+			<div class="right">
+				<div id='details'>
+					<!-- Insert details here-->
+					Details:</br>Detail of Resource</br>
+				</div>
+				<div id='login'>
+					<!-- Insert upload here-->
+					Login:</br>Login interface</br>
+
+				</div>
+				<div id='upload'>
+					<!-- Insert upload here-->
+					Upload:</br>Upload interface</br>
+				</div>
+			</div>
+		</div>
 		<div id="test"></div>
 
 		<button onclick="test()">
 			Rest
+		</button>
+		<button onclick="setUser('dave')">
+			getUser
+		</button>
+		<button onclick="getRating()">
+			getResource
 		</button>
 	</body>
 </html>

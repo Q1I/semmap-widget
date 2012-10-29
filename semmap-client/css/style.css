@@ -1,8 +1,28 @@
-input[name=user]{
-	visibility:hidden;
-	display:none;
+#semmap-widget{
+	width: 750px;
+	background-color: white;
+	padding: 10px;
+	margin: 10px;
+	border: 1px solid gray;
+	opacity: 0.9;
+	overflow:hidden;
+	-moz-box-shadow:    1px 2px 5px 2px #ccc;
+	-webkit-box-shadow: 1px 2px 5px 2px #ccc;
+	box-shadow:         1px 2px 5px 2px #ccc;
+	}
+#details, #upload, #picture, #starRating, #login{
+	margin: 10px;
+	padding: 5px;
+	border: 1px solid lightgrey;
+	-moz-box-shadow:    1px 2px 2px 1px #ccc;
+	-webkit-box-shadow: 1px 2px 2px 1px #ccc;
+	box-shadow:         1px 2px 2px 1px #ccc;
 }
+#upload{
 
-input.resource{
-	visibility:hidden;
 }
+#picture{width: 120px;padding:10px}
+.right{float: right;}
+.left{float:left;}
+#starRating{overflow:hidden}
+
