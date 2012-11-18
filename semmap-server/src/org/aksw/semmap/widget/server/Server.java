@@ -36,7 +36,6 @@ public class Server extends HttpServlet {
 	private ByteArrayInputStream fis = null;
 	private byte[] data = null;
 
-	
 	private static final String DEFAULT_TEMP_DIR = ".";
 
 	/**
@@ -44,13 +43,11 @@ public class Server extends HttpServlet {
 	 */
 	public Server() {
 		super();
-		// TODO Auto-generated constructor stub
 		echo("Start Server");
 	}
 
 	public void echo(String string) {
 		System.out.println("[Server]: " + string);
-
 	}
 
 	private File getTempDir() {
@@ -85,22 +82,21 @@ public class Server extends HttpServlet {
 			resp = "done";
 
 		String callback = request.getParameter("jsonpCallback");
-		echo("callback: "+callback);
-		if(callback == null)
-			resp +=" no callback!";
+		echo("callback: " + callback);
+		if (callback == null)
+			resp += " no callback!";
 		else
-			resp = "jsonpCallback ({ "+'"'+"html"+'"'+":"+'"'+getWidget()+'"'+"} );";
+			resp = "jsonpCallback ({ " + '"' + "html" + '"' + ":" + '"'
+					+ getWidget() + '"' + "} );";
 		echo(request.toString());
 		echo(resp);
 		// CORS
 		// resp.addHeader("Access-Control-Allow-Origin",
 		// "http://localhost:8080");
-//		response.addHeader("Access-Control-Allow-Origin", "*");
+		// response.addHeader("Access-Control-Allow-Origin", "*");
 
 		response.setContentType("text/javascript");
-
 		response.getWriter().write(resp);
-
 	}
 
 	/**
@@ -132,8 +128,8 @@ public class Server extends HttpServlet {
 				int i = 0;
 				for (FileItem fileItem : items) {
 					String itemName = fileItem.getFieldName();
-					echo(">> "+i+".item: "+ itemName);
-					
+					echo(">> " + i + ".item: " + itemName);
+
 					if (itemName.equals("property"))
 						property = fileItem.getString();
 					if (itemName.equals("userId"))
@@ -142,25 +138,27 @@ public class Server extends HttpServlet {
 						resourceUri = fileItem.getString();
 					if (itemName.equals("rating"))
 						rating = fileItem.getString();
-					
+
 					echo("FieldName: " + fileItem.getFieldName());
 					echo("Name: " + fileItem.getName());
-					echo("Type: "
-							+ fileItem.getContentType());
+					echo("Type: " + fileItem.getContentType());
 
 					if (itemName.equals("file")) {
-						// Inputstream
 						data = fileItem.get();
-						fis = new ByteArrayInputStream(	data);
+						fis = new ByteArrayInputStream(data);
 						echo("file into inputstram!");
-						
-											}
-					
+					}
+
 					i++;
 				}
+
+				String msg = check();
+				if(msg != null)
+					response.sendError(
+							HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+							"An error occurred while adding template : "+msg);
 				
 				// Insert into db
-				// File
 				PreparedStatement ps = null;
 				try {
 					DBTool db = new DBTool(getResourceDir()
@@ -170,9 +168,9 @@ public class Server extends HttpServlet {
 					String query = "replace into file(resource, user, property,value) values (?, ?, ?, ?)";
 					conn.setAutoCommit(false);
 
-					echo("data length: "+data.length);
-					
-					// File DB insert
+					echo("data length: " + data.length);
+
+					// File
 					ps = conn.prepareStatement(query);
 					ps.setString(1, resourceUri);
 					ps.setString(2, userId);
@@ -181,81 +179,100 @@ public class Server extends HttpServlet {
 					ps.executeUpdate();
 					conn.commit();
 					echo("db commit");
-					
+
 					// Rating
-					if(rating != null){
-						
-					query = "replace into property(resource, user, property,value) values (?, ?, ?, ?)";
-					ps = conn.prepareStatement(query);
-					ps.setString(1, resourceUri);
-					ps.setString(2, userId);
-					ps.setString(3, "rating");
-					ps.setString(4,rating);
-					ps.executeUpdate();
-					conn.commit();
-					echo("Ratingdb commit!");
+					if (rating != null) {
+						query = "replace into property(resource, user, property,value) values (?, ?, ?, ?)";
+						ps = conn.prepareStatement(query);
+						ps.setString(1, resourceUri);
+						ps.setString(2, userId);
+						ps.setString(3, "rating");
+						ps.setString(4, rating);
+						ps.executeUpdate();
+						conn.commit();
+						echo("Ratingdb commit!");
 					}
-					
+
 					// Ok response message
 					response.setStatus(HttpServletResponse.SC_OK);
-					response.getWriter()
-							.print("File was added to database!");
+					response.getWriter().print("File was added to database!");
 					response.flushBuffer();
-					
-				} catch(Exception e){
-					echo("ERROR: "+e.getMessage());
-					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-				}
-				finally {
+
+				} catch (Exception e) {
+					echo("ERROR: " + e.getMessage());
+					response.sendError(
+							HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+							e.getMessage());
+				} finally {
 					ps.close();
 					fis.close();
 				}
 
 				echo(">> Info:");
-				echo("user: "+userId);
-				echo("resource: "+resourceUri);
-				echo("property: "+property);
-				if(rating !=null)
-					echo("rating: "+rating);
-				
+				echo("user: " + userId);
+				echo("resource: " + resourceUri);
+				echo("property: " + property);
+				if (rating != null)
+					echo("rating: " + rating);
+
 			} catch (Exception e) {
-				
+
 				response.sendError(
 						HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 						"An error occurred while adding template : "
 								+ e.getMessage());
+			} finally{
+				reset();
 			}
 
-		} else {			
+		} else {
 			response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
 					"Request contents type is not supported by the servlet.");
 		}
-		
-		
 
-		
 		echo("####Upload Servlet: Receiving formular done");
 	}
 
-	private String getWidget(){
-		File file = new File(getResourceDir()+"/resources/widget.html");
-	    int ch;
-	    StringBuffer strContent = new StringBuffer("");
-	    FileInputStream fin = null;
-	    try {
-	      fin = new FileInputStream(file);
-	      while ((ch = fin.read()) != -1)
-	        strContent.append((char) ch);
-	      fin.close();
-	    } catch (Exception e) {
-	      System.out.println(e);
-	    }
+	private void reset(){
+		this.property=null;
+		this.userId=null;
+		this.count=0;
+		this.rating=null;
+		this.resourceUri=null;
+		this.data =null;
+		this.fis=null;
+	}
+	private String check() {
+		if(this.property==null){
+			return "Property missing!";
+		}
+		if(this.userId==null){
+			return "User missing!";
+		}
+		if(this.resourceUri==null)
+			return "Resource missing!";
+		return null;
+	}
+
+	private String getWidget() {
+		File file = new File(getResourceDir() + "/resources/widget.html");
+		int ch;
+		StringBuffer strContent = new StringBuffer("");
+		FileInputStream fin = null;
+		try {
+			fin = new FileInputStream(file);
+			while ((ch = fin.read()) != -1)
+				strContent.append((char) ch);
+			fin.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		echo(strContent.toString());
 
 		return strContent.toString().replaceAll("\\s", " ");
 
 	}
-	
+
 	private String getResourceDir() {
 		String prefix = getServletContext().getRealPath("");
 		if (!prefix.endsWith("/")) {
@@ -263,8 +280,8 @@ public class Server extends HttpServlet {
 		}
 		// resourcePath = prefix+"WEB-INF/classes/";
 		String resourcePath = prefix + "WEB-INF/";
-//		echo("prefix: " + prefix);
-//		echo("resourcePath: " + resourcePath);
+		// echo("prefix: " + prefix);
+		// echo("resourcePath: " + resourcePath);
 
 		return resourcePath;
 	}

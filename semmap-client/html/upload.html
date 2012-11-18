@@ -1,14 +1,14 @@
 <form action="http://localhost:8080/semmap-server/Server"
-enctype="multipart/form-data" onsubmit='return checkForm()' method="post">
+enctype="multipart/form-data" onsubmit='return WIDGET.checkForm()' method="post">
 	<p>
 		Property:
 		<br>
-		<select id="selectProperty" onchange='setProperty()'>
-			<option value="menue">Menue</option>
-			<option value="other">Other</option>
+		<select id="selectProperty" onchange='WIDGET.setProperty()'>
+			<option value="menue">menue</option>
+			<option value="other">other</option>
 		</select>
-		<input id='property' type="text" name="property" size="30" style='display:none'>
-		<input id='user' type="text" name="userId" size="30" value="gumio" style='display: none'>
+		<input id='property' type="text" name="property" value='menue' size="30" style='display:none'>
+		<input id='user' type="text" name="userId" size="30" style='display: none'>
 		<input id='resource' type="text" name="resourceUri" size="30" style='display: none'>
 		<input id='rating' type="text" name="rating" size="30" style='display: none'>
 	</p>
